@@ -1,4 +1,4 @@
-# ESP32-S3 Pair48 and Livermore benchmark
+# ESP32-S3 vs Cray-1: Pair48 Precision and Livermore Performance
 
 This repository explores how far an ESP32-S3 can run scientific workloads associated with the Cray-1 era using software extended precision. It contains a reusable two-float arithmetic library, hand-written Xtensa assembly experiments, and a fidelity-oriented port of Livermore loops 1–14.
 
@@ -9,6 +9,33 @@ The project separates three questions that are easy to conflate:
 3. Does the translated benchmark reproduce the original Livermore workload and checksums closely enough to make performance comparisons meaningful?
 
 The first two have useful measured results. The third has substantially improved: Accurate48 now agrees with the published Livermore checksum targets for loops 1–14 across all three configured spans, within the precision limits described below. This is still a partial port and not an official Livermore benchmark result.
+
+## The comparison at a glance
+
+The headline question is how an ESP32-S3 running software extended precision compares with a real Cray-1 on Livermore workloads. A historical Cray-1 CFT '84 table reports these per-kernel rates ([Datamation, September 1984, Fig. 3](https://www.bitsavers.org/magazines/Datamation/19840901.pdf); reproduced in [Wolcott, Table 5-5](https://studylib.net/doc/25884033/p.wolcott)):
+
+| Livermore kernel | Cray-1 CFT '84 (MFLOPS) |
+| ---: | ---: |
+| 1 | 100.0 |
+| 2 | 41.7 |
+| 3 | 33.3 |
+| 4 | 24.3 |
+| 5 | 7.7 |
+| 6 | 7.0 |
+| 7 | 120.0 |
+| 8 | 55.4 |
+| 9 | 68.0 |
+| 10 | 36.0 |
+| 11 | 2.9 |
+| 12 | 25.0 |
+| 13 | 4.0 |
+| 14 | 5.6 |
+
+For the same first 14 kernel numbers, the corrected ESP32-S3 run measured geometric means across the three configured spans of **9.074 MFLOPS Pair48** and **5.200 MFLOPS Accurate48**. Taking the geometric mean of the 14 published Cray-1 rates gives **21.60 MFLOPS**. That puts the Cray-1's geometric mean at about **2.38× Pair48** and **4.15× Accurate48** in this provisional comparison. FP32 on the ESP32-S3 measured 43.555 MFLOPS geometric mean, but it does not provide comparable precision.
+
+These are useful orientation figures, not official LFK scores or controlled head-to-head results. The Cray-1 table is a single historical rate per kernel; the ESP32-S3 figure combines three span sets and uses one timing trial. The ESP32 port includes only kernels 1–14 and does not reproduce the full historical timing/calibration driver. Historical compiler, precision, and run conventions are not fully matched. Read the detailed caveats and per-kernel historical references in [`BENCHMARK_FINDINGS.md`](BENCHMARK_FINDINGS.md) and [`main/asm/PAIR48_DEV_LOG.md`](main/asm/PAIR48_DEV_LOG.md).
+
+The main takeaway is the wide per-kernel range: the Cray-1 table spans 2.9 to 120 MFLOPS. The aggregate ratios summarize the 14-kernel comparison but do not show that one machine wins every kernel; use the findings document for the historical kernel-by-kernel reference data and their provenance.
 
 ## Hardware and toolchain
 
