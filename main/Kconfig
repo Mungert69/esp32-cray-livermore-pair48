@@ -1,0 +1,15 @@
+menu "Benchmark Selection"
+
+choice
+    prompt "Benchmark to run"
+    default BENCHMARK_TYPE_CRAY
+
+config BENCHMARK_TYPE_CRAY
+    bool "Cray SAXPY benchmark (cray_benchmark.c)"
+
+config BENCHMARK_TYPE_LIVERMORE
+    bool "Livermore Kernels 1-14 benchmark (components/livermore)"
+
+endchoice
+
+endmenu

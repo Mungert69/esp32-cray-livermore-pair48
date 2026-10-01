@@ -1,0 +1,14 @@
+# ESP-IDF generated output and local configuration
+/build/
+/sdkconfig
+/sdkconfig.old
+/managed_components/
+/dependencies.lock
+
+# Local packaged snapshots
+*.tar.gz
+
+# Editor / OS files
+.vscode/
+.idea/
+.DS_Store

@@ -1,0 +1,19 @@
+ESP32-S3 Pair48 assembly syntax audit
+
+Fixed:
+- invalid `andi a7, a5, 1` / `and a7, a5, 1`
+  -> `movi.n a7, 1` + `and a7, a5, a7`
+- `.align 4` is now immediately before every function using `entry`
+- section changed to canonical ESP-IDF `.section .iram1, "ax"`
+
+The `.align 4` choice follows Espressif ESP32/Xtensa assembly sources.
+The installed ESP-IDF assembler is still the final authority: run `idf.py build`.
+
+Runtime audit (2026-10-01):
+- The initial on-device bulk-add run faulted because execution fell through
+  alignment padding emitted before `loopnez`.
+- Pair-count branches in add, multiply, and SAXPY now skip the aligned loop
+  entry/padding safely. The 64-bit PIE load/store instructions and arithmetic
+  were not changed.
+- ESP-IDF 6.1 build and on-device scalar/bulk self-test passed after the fix;
+  see PAIR48_DEV_LOG.md for measured results.
